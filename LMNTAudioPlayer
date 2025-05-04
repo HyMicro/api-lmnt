@@ -6,7 +6,7 @@ using System.Text;
 public class LMNTAudioPlayer : MonoBehaviour
 {
     [Header("LMNT API Settings")]
-    [SerializeField] private string apiKey = "555b847143ac4f5faa94210f40e76629";
+    [SerializeField] private string apiKey = "6679fdcfa98742d5996f1302bc61f982";
     [SerializeField] private string voiceId = "92c22d93-b7ea-491f-b7fe-6b3f5f41ea7a";
     [SerializeField] private AudioSource audioSource;
 
@@ -30,13 +30,9 @@ public class LMNTAudioPlayer : MonoBehaviour
         }
 
         // Verify API key is set
-        if (string.IsNullOrEmpty(apiKey))
+        if (apiKey == "YOUR_API_KEY_HERE" || string.IsNullOrEmpty(apiKey))
         {
             Debug.LogError("LMNT API Key not set! Please set your API key in the Inspector.");
-        }
-        else
-        {
-            Debug.Log("LMNT API Key is configured.");
         }
     }
 
@@ -54,14 +50,11 @@ public class LMNTAudioPlayer : MonoBehaviour
 
     private IEnumerator RequestAndPlayAudio(string text)
     {
-        // LMNT API v1 endpoint
         string apiUrl = "https://api.lmnt.com/v1/synthesize";
 
         // Prepare request body with proper JSON escaping
         string jsonBody = $"{{\"voice\": \"{voiceId}\", \"text\": \"{EscapeJson(text)}\"}}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
-
-        Debug.Log($"Sending request to LMNT API with voice: {voiceId}");
 
         // Create the request
         using (UnityWebRequest request = new UnityWebRequest(apiUrl, "POST"))
@@ -74,7 +67,7 @@ public class LMNTAudioPlayer : MonoBehaviour
             request.SetRequestHeader("Accept", "audio/mpeg");
             request.SetRequestHeader("X-API-Key", apiKey);
 
-            Debug.Log("Sending TTS request to LMNT API...");
+            Debug.Log("Sending TTS request to LMNT API");
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.Success)
@@ -101,14 +94,6 @@ public class LMNTAudioPlayer : MonoBehaviour
             {
                 Debug.LogError($"LMNT TTS Error: {request.responseCode} - {request.error}");
                 Debug.LogError($"Response body: {request.downloadHandler.text}");
-
-                // Try checking API key
-                if (request.responseCode == 401)
-                {
-                    Debug.LogError("Authentication failed. Please check your API key and make sure it's valid.");
-                    Debug.LogError("API Key length: " + (apiKey?.Length ?? 0));
-                }
-
                 OnAudioPlaybackComplete?.Invoke();
             }
         }
