@@ -50,7 +50,7 @@ public class LMNTAudioPlayer : MonoBehaviour
 
     private IEnumerator RequestAndPlayAudio(string text)
     {
-        string apiUrl = "https://api.lmnt.com/v1/synthesize";
+        string apiUrl = "https://api.lmnt.com/v1/ai/speech/bytes";
 
         // Prepare request body with proper JSON escaping
         string jsonBody = $"{{\"voice\": \"{voiceId}\", \"text\": \"{EscapeJson(text)}\"}}";
